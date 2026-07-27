@@ -1,0 +1,4 @@
+# Source images. The site ships the optimized .webp versions of these.
+*.png
+*.jpg
+*.jpeg

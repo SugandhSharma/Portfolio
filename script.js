@@ -11,263 +11,96 @@ document.addEventListener("DOMContentLoaded", () => {
     const menuBtn = document.querySelector(".menu-btn");
     const navLinks = document.querySelector(".nav-links");
 
-    if(menuBtn){
+    const setMenu = (open) => {
+        navLinks.classList.toggle("active", open);
+        menuBtn.setAttribute("aria-expanded", String(open));
+    };
 
-        menuBtn.addEventListener("click",()=>{
-
-            navLinks.classList.toggle("active");
-
-        });
-
-    }
+    menuBtn.addEventListener("click", () => {
+        setMenu(!navLinks.classList.contains("active"));
+    });
 
     // ==========================
     // CLOSE MENU AFTER CLICK
     // ==========================
 
-    document.querySelectorAll(".nav-links a").forEach(link=>{
-
-        link.addEventListener("click",()=>{
-
-            navLinks.classList.remove("active");
-
-        });
-
+    navLinks.querySelectorAll("a").forEach(link => {
+        link.addEventListener("click", () => setMenu(false));
     });
 
-    // ==========================
-    // SMOOTH SCROLL
-    // ==========================
-
-    document.querySelectorAll('a[href^="#"]').forEach(anchor=>{
-
-        anchor.addEventListener("click",function(e){
-
-            e.preventDefault();
-
-            const target=document.querySelector(this.getAttribute("href"));
-
-            if(target){
-
-                target.scrollIntoView({
-
-                    behavior:"smooth"
-
-                });
-
-            }
-
-        });
-
-    });
-
-    // ==========================
-    // ACTIVE NAVBAR LINK
-    // ==========================
-
-    const sections=document.querySelectorAll("section");
-    const navItems=document.querySelectorAll(".nav-links a");
-
-    window.addEventListener("scroll",()=>{
-
-        let current="";
-
-        sections.forEach(section=>{
-
-            const sectionTop=section.offsetTop-150;
-
-            if(window.scrollY>=sectionTop){
-
-                current=section.getAttribute("id");
-
-            }
-
-        });
-
-        navItems.forEach(link=>{
-
-            link.classList.remove("active");
-
-            if(link.getAttribute("href")==="#" + current){
-
-                link.classList.add("active");
-
-            }
-
-        });
-
-    });
-
-    // ==========================
-    // NAVBAR SHADOW
-    // ==========================
-
-    const header=document.querySelector("header");
-
-    window.addEventListener("scroll",()=>{
-
-        if(window.scrollY>50){
-
-            header.classList.add("sticky");
-
-        }
-
-        else{
-
-            header.classList.remove("sticky");
-
-        }
-
-    });
+    // Smooth scrolling is CSS (scroll-behavior:smooth) so the browser also
+    // updates the URL hash and moves keyboard focus to the section.
 
     // ==========================
     // SCROLL TO TOP BUTTON
     // ==========================
 
-    const topBtn=document.createElement("button");
-
-    topBtn.innerHTML='<i class="fa-solid fa-arrow-up"></i>';
-
-    topBtn.id="topBtn";
-
+    const topBtn = document.createElement("button");
+    topBtn.innerHTML = '<i class="fa-solid fa-arrow-up" aria-hidden="true"></i>';
+    topBtn.id = "topBtn";
+    topBtn.type = "button";
+    topBtn.setAttribute("aria-label", "Back to top");
     document.body.appendChild(topBtn);
 
-    topBtn.style.cssText=`
-
-    position:fixed;
-    right:25px;
-    bottom:25px;
-    width:55px;
-    height:55px;
-    border:none;
-    border-radius:50%;
-    background:#2563eb;
-    color:white;
-    font-size:20px;
-    cursor:pointer;
-    display:none;
-    z-index:999;
-    transition:.3s;
-
-    `;
-
-    window.addEventListener("scroll",()=>{
-
-        if(window.scrollY>400){
-
-            topBtn.style.display="block";
-
-        }
-
-        else{
-
-            topBtn.style.display="none";
-
-        }
-
-    });
-
-    topBtn.addEventListener("click",()=>{
-
-        window.scrollTo({
-
-            top:0,
-
-            behavior:"smooth"
-
-        });
-
+    topBtn.addEventListener("click", () => {
+        window.scrollTo({ top: 0, behavior: "smooth" });
     });
 
     // ==========================
-    // SCROLL REVEAL
+    // SCROLL: ACTIVE LINK, NAVBAR SHADOW, TOP BUTTON
     // ==========================
 
-    const observer=new IntersectionObserver((entries)=>{
+    const sections = document.querySelectorAll("section");
+    const navItems = document.querySelectorAll(".nav-links a");
+    const header = document.querySelector("header");
 
-        entries.forEach(entry=>{
+    window.addEventListener("scroll", () => {
 
-            if(entry.isIntersecting){
+        let current = "";
 
-                entry.target.classList.add("show");
-
+        sections.forEach(section => {
+            if (window.scrollY >= section.offsetTop - 150) {
+                current = section.getAttribute("id");
             }
-
         });
 
-    },{
-
-        threshold:.2
-
-    });
-
-    document.querySelectorAll("section").forEach(section=>{
-
-        observer.observe(section);
-
-    });
-
-
-
-
-    // ==========================
-    // CERTIFICATIONS ANIMATION
-    // ==========================
-
-    const certCards = document.querySelectorAll(".cert-card");
-
-    const certObserver = new IntersectionObserver((entries) => {
-
-        entries.forEach((entry) => {
-
-            if (entry.isIntersecting) {
-
-                entry.target.classList.add("show");
-
-            }
-
+        navItems.forEach(link => {
+            link.classList.toggle("active", link.getAttribute("href") === "#" + current);
         });
 
-    }, {
-
-        threshold: 0.2
-
-    });
-
-    certCards.forEach((card) => {
-
-        certObserver.observe(card);
+        header.classList.toggle("sticky", window.scrollY > 50);
+        topBtn.classList.toggle("show", window.scrollY > 400);
 
     });
-
 
     // ==========================
     // CONTACT FORM
     // ==========================
+    // No backend: the form opens the visitor's mail client with the message
+    // pre-filled. To collect submissions on a server instead, give the <form>
+    // an action (e.g. Formspree) and delete this handler.
 
-    const form=document.querySelector("form");
+    const form = document.querySelector("form");
 
-    if(form){
+    if (form) {
 
-        form.addEventListener("submit",(e)=>{
+        form.addEventListener("submit", (e) => {
 
             e.preventDefault();
 
-            const btn=form.querySelector("button");
+            const { name, email, message } = form.elements;
 
-            btn.innerHTML="Message Sent ✓";
+            const subject = `Portfolio contact from ${name.value}`;
+            const body = `${message.value}\n\n— ${name.value} (${email.value})`;
 
-            btn.style.background="#16a34a";
+            window.location.href = "mailto:sugandhsharma586@gmail.com"
+                + `?subject=${encodeURIComponent(subject)}`
+                + `&body=${encodeURIComponent(body)}`;
 
-            setTimeout(()=>{
+            const btn = form.querySelector("button");
+            btn.textContent = "Opening your mail app…";
 
-                btn.innerHTML="Send Message";
-
-                btn.style.background="#2563eb";
-
-            },2500);
-
-            form.reset();
+            setTimeout(() => { btn.textContent = "Send Message"; }, 2500);
 
         });
 

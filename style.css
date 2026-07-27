@@ -1,7 +1,4 @@
-/* ==========================
-   GOOGLE FONT
-========================== */
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap');
+/* Poppins is loaded via <link> in index.html <head> — an @import here blocks rendering on a third round trip. */
 
 /* ==========================
    RESET
@@ -107,12 +104,23 @@ header{
     transition:.3s;
 }
 
-.nav-links a:hover::after{
+.nav-links a:hover::after,
+.nav-links a.active::after{
     width:100%;
+}
+
+.nav-links a.active{
+    color:#3b82f6;
+}
+
+header.sticky{
+    box-shadow:0 6px 25px rgba(0,0,0,.45);
 }
 
 .menu-btn{
     display:none;
+    background:none;
+    border:none;
     color:white;
     font-size:28px;
     cursor:pointer;
@@ -665,6 +673,8 @@ section{
 
     content:"";
 
+    pointer-events:none;
+
     position:absolute;
 
     top:-100%;
@@ -1111,6 +1121,8 @@ overflow:hidden;
 
 content:"";
 
+pointer-events:none;
+
 position:absolute;
 
 top:-100%;
@@ -1174,6 +1186,8 @@ overflow:hidden;
 .btn::before{
 
 content:"";
+
+pointer-events:none;
 
 position:absolute;
 
@@ -1262,6 +1276,8 @@ box-shadow:0 20px 40px rgba(0,0,0,.3);
 }
 
 .nav-links.active{
+
+display:flex;
 
 right:20px;
 
@@ -1368,6 +1384,37 @@ width:200px;
 }
 
 /*====================================
+        SCROLL TO TOP BUTTON
+====================================*/
+
+#topBtn{
+
+position:fixed;
+right:25px;
+bottom:25px;
+width:55px;
+height:55px;
+border:none;
+border-radius:50%;
+background:#2563eb;
+color:white;
+font-size:20px;
+cursor:pointer;
+z-index:999;
+transition:.3s;
+opacity:0;
+visibility:hidden;
+
+}
+
+#topBtn.show{
+
+opacity:1;
+visibility:visible;
+
+}
+
+/*====================================
         SELECTION
 ====================================*/
 
@@ -1376,6 +1423,20 @@ width:200px;
 background:#3b82f6;
 
 color:#fff;
+
+}
+
+/*====================================
+        REDUCED MOTION
+====================================*/
+
+@media(prefers-reduced-motion:reduce){
+
+*{
+animation:none!important;
+transition:none!important;
+scroll-behavior:auto!important;
+}
 
 }
 
